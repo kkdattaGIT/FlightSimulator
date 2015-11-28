@@ -1,0 +1,56 @@
+﻿@model IEnumerable<FlightSearchSimulator.Models.SearchResult>
+
+@{
+    
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Search Result</h2>
+
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.AirlineLogoAddress)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AirlineName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.InboundFlightsDuration)
+        </th>
+        
+        <th>
+            @Html.DisplayNameFor(model => model.OutboundFlightsDuration)
+        </th>
+        
+        <th>
+            @Html.DisplayNameFor(model => model.TotalAmount)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            <img src="@Html.DisplayFor(modelItem => item.AirlineLogoAddress)" >
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.AirlineName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.InboundFlightsDuration)
+        </td>
+
+        <td>
+            @Html.DisplayFor(modelItem => item.OutboundFlightsDuration)
+        </td>
+       
+        <td>
+            @Html.DisplayFor(modelItem => item.TotalAmount)
+        </td>
+        
+    </tr>
+}
+
+</table>

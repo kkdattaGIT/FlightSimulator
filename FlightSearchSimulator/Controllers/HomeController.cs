@@ -21,7 +21,7 @@ namespace FlightSearchSimulator.Controllers
 
         public async Task<ActionResult> Search()
         {
-            ViewBag.Message = "Your application description page.";
+            var ss = FlightSearchResources.FSContent.DeptAirportCodeDisplay;
             IEnumerable<SearchResult> results = null;
             using (HttpClient client = new HttpClient())
             using (HttpResponseMessage response = await client.GetAsync(Request.Url.GetLeftPart(UriPartial.Authority) + Url.Content("~")+"/api/SearchFlights"))

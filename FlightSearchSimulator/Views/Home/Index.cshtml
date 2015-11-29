@@ -1,19 +1,15 @@
 ﻿@model FlightSearchSimulator.Models.SearchRequest
 
 @{
-    ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
-<h2>Index</h2>
-
 
 @using (Html.BeginForm("Search", "Home"))
 {
     @Html.AntiForgeryToken()
     
     <div class="form-horizontal">
-        <h4>SearchRequest</h4>
+        <h4>@FlightSearchResources.FSContent.SearchRequestLabel</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         <div class="form-group">

@@ -1,4 +1,5 @@
-﻿using FlightSearchSimulator.Interfaces;
+﻿using FlightSearchSimulator.Helpers;
+using FlightSearchSimulator.Interfaces;
 using FlightSearchSimulator.Models;
 using FlightSearchSimulator.Repositories;
 using Newtonsoft.Json;
@@ -17,13 +18,15 @@ namespace FlightSearchSimulator.Controllers
     public class HomeController : Controller
     {
         private readonly IFlightSearchRepository flightSearchRepository;
+        private readonly IHelper helper;
 
-        public HomeController(IFlightSearchRepository flightSearchRepository)
+        public HomeController(IFlightSearchRepository flightSearchRepository, IHelper helper)
         {
             this.flightSearchRepository = flightSearchRepository;
+            this.helper = helper;
         }
 
-        public HomeController() : this(new FlightSearchRepository())
+        public HomeController() : this(new FlightSearchRepository(),new Helper())
         {
 
         }
@@ -33,35 +36,22 @@ namespace FlightSearchSimulator.Controllers
             return View(sr);
         }
 
-        //public ActionResult Search()
-        //{
-        //    NameValueCollection Parameters = new NameValueCollection();
-        //    List<Provider> ProviderList = new List<Provider>();
-        //    Provider P = new Provider();
-        //    P.ProviderUri = Request.Url.GetLeftPart(UriPartial.Authority) + Url.Content("~") + "/api/SearchFlights";
-        //    P.JsonDataPropertyName = "";
-        //    ProviderList.Add(P);
-        //    Parameters.Add("DepartureAirportCode", "MEL");
-        //    FlightSearchRepository FS = new FlightSearchRepository();
-        //    var results = FS.Search(ProviderList, Parameters);
-
-        //    return View(results.Result);
-        //}
-
         public async Task<ActionResult> Search()
         {
-            IEnumerable<SearchResult> results = null;
-            using (HttpClient client = new HttpClient())
-            using (HttpResponseMessage response = await client.GetAsync(Request.Url.GetLeftPart(UriPartial.Authority) + Url.Content("~") + "/api/SearchFlights"))
-            using (HttpContent content = response.Content)
-            {
-                var res = await content.ReadAsStringAsync();
-                JObject json = JObject.Parse("{ \"Results\": " + res + "}");
-                results = JsonConvert.DeserializeObject<IEnumerable<SearchResult>>(json.GetValue("Results").ToString());
-            }
+            NameValueCollection Parameters = new NameValueCollection();
+            List<Provider> ProviderList = new List<Provider>();
+            Provider P = new Provider();
+            Helper helper = new Helper();
+            P.ProviderUri = this.helper.GetBaseUrl() + "/api/SearchFlights";
+            P.JsonDataPropertyName = "";
+            ProviderList.Add(P);
+            Parameters.Add("DepartureAirportCode", "MEL");
+            //FlightSearchRepository FS = new FlightSearchRepository();
+            IEnumerable<SearchResult> results = await this.flightSearchRepository.Search(ProviderList, Parameters);
 
             return View(results);
         }
+
 
     }
 }

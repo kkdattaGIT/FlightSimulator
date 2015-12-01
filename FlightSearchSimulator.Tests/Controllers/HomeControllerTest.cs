@@ -25,5 +25,17 @@ namespace FlightSearchSimulator.Tests.Controllers
             Assert.IsNotNull(result);
         }
 
+        [TestMethod]
+        //public void Search_ReturnsCollectionOfTypeSearchResult()
+        //{
+        //    var flightSearchRepository = new Mock<IFlightSearchRepository>();
+        //    flightSearchRepository.Setup(...)
+
+        //    HomeController sut = new HomeController(flightSearchRepository.Object);
+
+        //    var actual = sut.Search();
+
+        //}
+
     }
 }

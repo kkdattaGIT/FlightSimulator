@@ -1,8 +1,11 @@
-﻿using FlightSearchSimulator.Models;
+﻿using FlightSearchSimulator.Interfaces;
+using FlightSearchSimulator.Models;
+using FlightSearchSimulator.Repositories;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -20,20 +23,11 @@ namespace FlightSearchSimulator.Controllers
         public async Task<IEnumerable<SearchResult>> Get()
         {
             createProviderData();
-            IEnumerable<SearchResult> results = null;
-            Task<IEnumerable<SearchResult>>[] tasks = new Task<IEnumerable<SearchResult>>[ProviderList.Count()];
-            int i = 0;
-            foreach (var item in ProviderList)
-            {
-                tasks[i] = GetFlightDetailsAsync(item.ProviderUri, item.JsonDataPropertyName);
-                i++;                
-            }
-           await Task.WhenAll(tasks);
-           foreach (var item in tasks)
-            {if (results == null)
-                {results=item.Result;}
-                else {results = results.Concat(item.Result);}
-            }
+            NameValueCollection Parameters = new NameValueCollection();
+            Parameters.Add("DepartureAirportCode", "MEL");
+            FlightSearchRepository FS = new FlightSearchRepository();
+            var results = await FS.Search(ProviderList, Parameters);
+           
             return results;
          }
 
@@ -47,24 +41,6 @@ namespace FlightSearchSimulator.Controllers
             return Srequest;
         }
 
-        private async Task<IEnumerable<SearchResult>> GetFlightDetailsAsync(string uri, string PropertyName)
-            {
-                IEnumerable<SearchResult> results = null;
-                using (HttpClient client = new HttpClient())
-                using (HttpResponseMessage response = await client.GetAsync(uri))
-                using (HttpContent content = response.Content)
-                    {
-                        var res = await content.ReadAsStringAsync();
-                        JObject json;
-                        if (string.IsNullOrEmpty(PropertyName))
-                            json = JObject.Parse("{ \"Results\": " + res + "}");
-                        else
-                            json = JObject.Parse(res);
-                        results = JsonConvert.DeserializeObject<IEnumerable<SearchResult>>(json.GetValue("Results").ToString());
-                    }
-                return results;
-            }
-        
         private void createProviderData()
         {
             Provider P = new Provider();

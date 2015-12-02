@@ -37,6 +37,14 @@ namespace FlightSearchSimulator.Tests.Controllers
         [TestMethod]
         public void Search_ReturnsCollectionOfTypeSearchResult()
         {
+            // Arrange
+            var req = new SearchRequest()
+            {
+                ArrAirportCode = "MEL",
+                ArrDate = DateTime.Parse("1/1/2005"),
+                DeptAirportCode = "DEL",
+                DeptDate = DateTime.Parse("1/1/2005")
+            };
             var flightSearchRepository = new Mock<IFlightSearchRepository>();
             var helper = new Mock<IHelper>();
             NameValueCollection Parameters = new NameValueCollection();
@@ -53,7 +61,11 @@ namespace FlightSearchSimulator.Tests.Controllers
 
             HomeController sut = new HomeController(flightSearchRepository.Object, helper.Object);
 
-            var actual = sut.Search();
+            // Act
+            var actual = sut.Search(req);
+
+            // Assert
+            flightSearchRepository.Verify(s => s.Search(It.IsAny<List<Provider>>(), It.IsAny<NameValueCollection>()), Times.Once);
             Assert.IsInstanceOfType(((ViewResult)actual.Result).Model,typeof(List<SearchResult>));
             
 

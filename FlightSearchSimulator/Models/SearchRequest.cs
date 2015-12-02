@@ -11,8 +11,8 @@ namespace FlightSearchSimulator.Models
 {
     
     public class SearchRequest
-    
-{
+
+    {
         [Required(ErrorMessageResourceName = "DeptAirportCodeReqError", ErrorMessageResourceType = typeof(FSContent))]
         [RegularExpression(@"^[a-zA-Z0-9 ]{3,3}$", ErrorMessageResourceName = "DeptAirportCodeReqLengthValidationMsg", ErrorMessageResourceType = typeof(FSContent))]
         [Display(Name = "DeptAirportCodeDisplay", ResourceType = typeof(FSContent))]

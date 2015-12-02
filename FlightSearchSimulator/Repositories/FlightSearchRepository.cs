@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Collections.Specialized;
+using System.Web;
 
 namespace FlightSearchSimulator.Repositories
 {
@@ -18,10 +19,14 @@ namespace FlightSearchSimulator.Repositories
         {
             IEnumerable<SearchResult> results = null;
             Task<IEnumerable<SearchResult>>[] tasks = new Task<IEnumerable<SearchResult>>[ProviderList.Count()];
+            
+            var values = string.Join("&", parameters.AllKeys.Select(key => key + "=" + parameters[key]).ToArray());//parameters.Cast<string>().Select(e => parameters[e]);
+            var QsParams = HttpUtility.ParseQueryString(values);
+
             int i = 0;
             foreach (var item in ProviderList)
             {
-                tasks[i] = DoSearch(item.ProviderUri, item.JsonDataPropertyName);
+                tasks[i] = DoSearch(item.ProviderUri+"?"+QsParams, item.JsonDataPropertyName);
                 i++;
             }
             await Task.WhenAll(tasks);

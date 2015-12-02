@@ -36,7 +36,7 @@ namespace FlightSearchSimulator.Controllers
             return View(sr);
         }
 
-        public async Task<ActionResult> Search()
+        public async Task<ActionResult> Search(SearchRequest req)
         {
             NameValueCollection Parameters = new NameValueCollection();
             List<Provider> ProviderList = new List<Provider>();
@@ -45,8 +45,11 @@ namespace FlightSearchSimulator.Controllers
             P.ProviderUri = this.helper.GetBaseUrl() + "/api/SearchFlights";
             P.JsonDataPropertyName = "";
             ProviderList.Add(P);
-            Parameters.Add("DepartureAirportCode", "MEL");
-            //FlightSearchRepository FS = new FlightSearchRepository();
+            foreach (var item in req.GetType().GetProperties().ToList())
+            {
+                Parameters.Add(item.Name,item.GetValue(req,null).ToString());
+            }
+            
             IEnumerable<SearchResult> results = await this.flightSearchRepository.Search(ProviderList, Parameters);
 
             return View(results);

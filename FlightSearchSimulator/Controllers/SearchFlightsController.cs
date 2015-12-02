@@ -12,6 +12,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Http;
 
 namespace FlightSearchSimulator.Controllers
@@ -23,24 +24,14 @@ namespace FlightSearchSimulator.Controllers
         public async Task<IEnumerable<SearchResult>> Get()
         {
             createProviderData();
-            NameValueCollection Parameters = new NameValueCollection();
-            Parameters.Add("DepartureAirportCode", "MEL");
+            NameValueCollection Parameters = HttpUtility.ParseQueryString(Request.RequestUri.Query);
             FlightSearchRepository FS = new FlightSearchRepository();
             var results = await FS.Search(ProviderList, Parameters);
            
             return results;
          }
 
-        private SearchRequest createSearchRequest()
-        {
-            SearchRequest Srequest = new SearchRequest();
-            Srequest.DeptAirportCode = "MEl";
-            Srequest.ArrAirportCode = "LHR";
-            Srequest.DeptDate = DateTime.Parse("2012-12-24T00:00:00+11:00");
-            Srequest.ArrDate = DateTime.Parse("2013-01-03T00:00:00+11:00");
-            return Srequest;
-        }
-
+ 
         private void createProviderData()
         {
             Provider P = new Provider();
